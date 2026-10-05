@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tattica Digitale</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root{
+    --paper:#f2efe6;
+    --panel:#ffffff;
+    --panel-2:#faf8f2;
+    --ink:#17201b;
+    --ink-soft:#59635c;
+    --line:#dfe0d6;
+    --pitch-a:#2f8a52;
+    --pitch-b:#2b7f4b;
+    --chalk:#eef3ec;
+    --accent:#e2542f;
+    --accent-soft:#f4d9cf;
+    --good:#2f8a52;
+    --shadow:0 1px 2px rgba(20,30,24,.06),0 8px 24px rgba(20,30,24,.08);
+    --radius:14px;
+    --font-display:'Barlow Condensed',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --paper:#0e1512;
+      --panel:#16201b;
+      --panel-2:#111a16;
+      --ink:#e7ede8;
+      --ink-soft:#93a099;
+      --line:#26322b;
+      --chalk:#eef3ec;
+      --accent:#ff6a42;
+      --accent-soft:#3a221a;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0e1512;
+    --panel:#16201b;
+    --panel-2:#111a16;
+    --ink:#e7ede8;
+    --ink-soft:#93a099;
+    --line:#26322b;
+    --chalk:#eef3ec;
+    --accent:#ff6a42;
+    --accent-soft:#3a221a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--font-body);-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;min-height:100%;
+  }
+  .wrap{width:100%;max-width:760px;margin:0 auto;padding-inline:16px;flex:1;display:flex;flex-direction:column}
+
+  header.app{
+    position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+    background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+    margin-inline:-16px;padding:12px 16px 10px;
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .badge{
+    width:34px;height:34px;border-radius:9px;flex:none;
+    background:#fff;border:1px solid var(--line);
+    display:grid;place-items:center;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .brand h1{font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:.3px;margin:0;line-height:1;text-transform:uppercase}
+  .brand p{margin:2px 0 0;font-size:11.5px;color:var(--ink-soft);letter-spacing:.2px}
+  .theme-btn{margin-left:auto;background:var(--panel);border:1px solid var(--line);color:var(--ink-soft);
+    width:34px;height:34px;border-radius:9px;cursor:pointer;display:grid;place-items:center}
+
+  nav.tabs{display:flex;gap:6px;margin-top:12px}
+  nav.tabs button{
+    flex:1;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.5px;
+    font-size:13.5px;font-weight:600;padding:9px 4px;border-radius:10px;cursor:pointer;
+    background:transparent;border:1px solid transparent;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  nav.tabs button .n{font-family:var(--font-mono);font-size:10px;opacity:.6}
+  nav.tabs button[aria-selected="true"]{background:var(--panel);border-color:var(--line);color:var(--ink);box-shadow:var(--shadow)}
+
+  main{padding-block:18px 40px}
+  section.view{display:flex;flex-direction:column;gap:16px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card .pad{padding:16px}
+  .card h2{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.6px;font-size:16px;margin:0 0 3px}
+  .card .sub{font-size:12.5px;color:var(--ink-soft);margin:0 0 12px;line-height:1.5}
+
+  .step{display:flex;gap:11px;align-items:flex-start;font-size:13px;line-height:1.5}
+  .step .k{font-family:var(--font-mono);font-size:11px;background:var(--accent-soft);color:var(--accent);
+    width:22px;height:22px;border-radius:6px;display:grid;place-items:center;flex:none;font-weight:600}
+  .step b{color:var(--ink)}
+  .steps{display:flex;flex-direction:column;gap:10px}
+
+  .btn{
+    font-family:var(--font-display);text-transform:uppercase;letter-spacing:.6px;font-weight:600;font-size:14px;
+    padding:12px 16px;border-radius:11px;border:1px solid transparent;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+    background:var(--accent);color:#fff;box-shadow:var(--shadow);transition:transform .08s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:var(--panel);color:var(--ink);border-color:var(--line);box-shadow:none}
+  .btn.mini{width:auto;font-size:12.5px;padding:9px 13px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:130px}
+
+  .canvas-hold{background:var(--panel-2);border-radius:12px;border:1px solid var(--line);padding:10px;display:flex;justify-content:center}
+  canvas{max-width:100%;height:auto;border-radius:8px;display:block;touch-action:none}
+
+  .ctrl{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+  .ctrl label{font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-soft);font-weight:600;display:flex;justify-content:space-between}
+  .ctrl label span{font-family:var(--font-mono);color:var(--ink);text-transform:none;letter-spacing:0}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+
+  .swatches{display:flex;gap:8px;flex-wrap:wrap}
+  .swatch{width:30px;height:30px;border-radius:8px;cursor:pointer;border:2px solid transparent;position:relative}
+  .swatch[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--ink)}
+  .swatch.orig{background:conic-gradient(#e2542f,#2f8a52,#2b6cff,#111,#e2542f);}
+  .swatch.orig::after{content:"AUTO";position:absolute;inset:0;display:grid;place-items:center;font-size:7px;font-family:var(--font-mono);color:#fff;text-shadow:0 1px 2px #000}
+
+  .seg{display:flex;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:none;background:transparent;color:var(--ink-soft);font-family:var(--font-display);
+    text-transform:uppercase;letter-spacing:.4px;font-size:12.5px;font-weight:600;padding:7px 4px;border-radius:7px;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+
+  .empty{text-align:center;color:var(--ink-soft);padding:34px 16px;font-size:13px;line-height:1.6}
+  .empty svg{opacity:.35;margin-bottom:10px}
+
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .shot{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+  .shot img{width:100%;display:block;object-fit:contain;background:#fff}
+  .shot .meta{padding:8px 10px;display:flex;align-items:center;gap:6px}
+  .shot .meta .nm{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .shot .meta time{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-soft)}
+  .shot .meta button{background:none;border:none;color:var(--ink-soft);cursor:pointer;padding:2px;flex:none}
+
+  .hint{font-size:11.5px;color:var(--ink-soft);line-height:1.55;display:flex;gap:7px;align-items:flex-start;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .hint svg{flex:none;margin-top:1px;color:var(--accent)}
+
+  .modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,12,.72);display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal .box{background:var(--panel);border-radius:14px;max-width:100%;max-height:100%;overflow:auto;box-shadow:var(--shadow);padding:12px}
+  .modal img{max-width:100%;border-radius:8px;display:block;background:#fff}
+  .modal .cap{font-size:12px;color:var(--ink-soft);text-align:center;padding:10px 6px 4px;line-height:1.5}
+
+  .stat{display:flex;gap:14px;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);flex-wrap:wrap}
+  .stat b{color:var(--ink)}
+  .detect{margin-top:10px;font-size:12px;font-weight:500;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:8px;line-height:1.4}
+  .detect.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good);border:1px solid color-mix(in srgb,var(--good) 30%,transparent)}
+  .detect.warn{background:var(--accent-soft);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+  .detect svg{flex:none}
+  .dbgtoggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft);margin-top:9px;cursor:pointer}
+  .dbgtoggle input{width:16px;height:16px;accent-color:var(--accent)}
+  .namebar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .namebar input{font-family:var(--font-body);font-size:15px;color:var(--ink);background:var(--panel-2);
+    border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  .namebar #exName{flex:1;min-width:150px}
+  .namebar #exDate{flex:none;color-scheme:light dark}
+  .namebar input:focus{outline:none;border-color:var(--accent)}
+  .divider{height:1px;background:var(--line);margin:2px 0}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:var(--paper);
+    padding:10px 16px;border-radius:999px;font-size:12.5px;font-weight:500;box-shadow:var(--shadow);z-index:60;opacity:0;pointer-events:none;transition:opacity .25s}
+  .toast.show{opacity:1}
+
+  /* ---- larger, more legible on phones ---- */
+  @media (max-width:600px){
+    body{font-size:15.5px}
+    .wrap{padding-inline:14px}
+    header.app{padding:14px 14px 12px;margin-inline:-14px}
+    .brand h1{font-size:23px}
+    .brand p{font-size:12.5px}
+    .badge{width:40px;height:40px}
+    .theme-btn{width:40px;height:40px}
+    nav.tabs{gap:5px;margin-top:14px}
+    nav.tabs button{font-size:15px;padding:12px 3px;flex-direction:column;gap:2px;line-height:1.1}
+    .card .pad{padding:16px}
+    .card h2{font-size:19px}
+    .card .sub{font-size:14px;margin-bottom:14px}
+    .step{font-size:14.5px}
+    .step .k{width:24px;height:24px;font-size:12px}
+    .btn{font-size:16px;padding:15px 16px;border-radius:13px}
+    .btn.mini{font-size:14px;padding:12px 14px}
+    .row>*{min-width:100%}
+    .row{gap:12px}
+    .seg button{font-size:14px;padding:10px 4px}
+    .ctrl label{font-size:13px}
+    input[type=range]{height:30px}
+    .swatch{width:38px;height:38px}
+    .hint{font-size:13.5px;padding:12px 14px}
+    .detect{font-size:13.5px;padding:11px 13px}
+    .stat{font-size:12px}
+    .gallery{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+    .shot .meta button{padding:6px}
+  }
+
+  @media print{
+    html,body{height:auto;background:#fff}
+    .wrap,.noprint{display:none!important}
+    #printArea{display:flex!important;align-items:center;justify-content:center;height:100vh}
+    #printArea img{max-width:100%;max-height:100%;width:auto;height:auto}
+  }
+  #printArea{display:none}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="app noprint">
+    <div class="brand">
+      <div class="badge">
+        <svg width="22" height="16" viewBox="0 0 42 28" fill="none" stroke="#17201b" stroke-width="1.3"><rect x="1" y="1" width="40" height="26" rx="1"/><path d="M21 1v26"/><circle cx="21" cy="14" r="5"/><rect x="1" y="8" width="6" height="12"/><rect x="35" y="8" width="6" height="12"/></svg>
+      </div>
+      <div>
+        <h1>Tattica Digitale</h1>
+        <p>Dal foglio al file grafico</p>
+      </div>
+      <button class="theme-btn" id="themeBtn" title="Tema">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="template" aria-selected="true"><span class="n">01</span>Modello</button>
+      <button role="tab" data-tab="capture" aria-selected="false"><span class="n">02</span>Acquisisci</button>
+      <button role="tab" data-tab="library" aria-selected="false"><span class="n">03</span>Sessioni</button>
+    </nav>
+  </header>
+
+  <main class="noprint">
+    <!-- ============ TEMPLATE ============ -->
+    <section class="view" id="view-template">
+      <div class="card">
+        <div class="pad">
+          <h2>Il modello del campo</h2>
+          <p class="sub">Stampa questo foglio. Le linee tenui e i puntini fanno da riferimento (come la carta Moleskine): dicono all'app dov'è il campo ma restano invisibili alla penna scura. I <b>4 quadrati agli angoli</b> sono i marcatori da toccare dopo lo scatto.</p>
+          <div class="seg" id="pitchSeg" style="margin-bottom:12px">
+            <button data-pitch="full" aria-pressed="true">Campo intero</button>
+            <button data-pitch="half" aria-pressed="false">Mezzo campo</button>
+          </div>
+          <div class="canvas-hold"><canvas id="tplCanvas"></canvas></div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn" id="printBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>
+              Stampa modello
+            </button>
+            <button class="btn ghost" id="tplSaveBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              Scarica PNG
+            </button>
+          </div>
+          <div class="hint" style="margin-top:12px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+            <span>Disegna l'esercizio con una <b>penna o pennarello scuro</b> (nero, blu, rosso). Il tratto scuro viene riconosciuto, le linee tenui del campo no.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CAPTURE ============ -->
+    <section class="view" id="view-capture" hidden>
+      <div class="card" id="captureIntro">
+        <div class="pad">
+          <h2>Scatta la foto</h2>
+          <p class="sub">Inquadra il foglio con l'esercizio disegnato. Non serve precisione: raddrizzerai gli angoli tu nel passo successivo.</p>
+          <div class="seg" id="capSeg" style="margin-bottom:14px">
+            <button data-pitch="full" aria-pressed="true">Campo intero</button>
+            <button data-pitch="half" aria-pressed="false">Mezzo campo</button>
+          </div>
+          <div class="steps" style="margin-bottom:14px">
+            <div class="step"><span class="k">1</span><div>Foglio su superficie piana, buona luce, <b>senza ombre</b> sul tratto.</div></div>
+            <div class="step"><span class="k">2</span><div>Inquadra tutti e <b>4 gli angoli</b> del campo.</div></div>
+            <div class="step"><span class="k">3</span><div>Scatta o carica la foto qui sotto.</div></div>
+          </div>
+          <div class="row">
+            <button class="btn" id="camBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+              Fotocamera
+            </button>
+            <button class="btn ghost" id="upBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4m0 0 4 4m-4-4-4 4M4 20h16"/></svg>
+              Carica file
+            </button>
+          </div>
+          <input type="file" id="camInput" accept="image/*" capture="environment" hidden>
+          <input type="file" id="upInput" accept="image/*" hidden>
+        </div>
+      </div>
+
+      <div class="card" id="editStage" hidden>
+        <div class="pad">
+          <h2>Raddrizza il campo</h2>
+          <p class="sub">Trascina i <b>4 pallini</b> sugli angoli del campo nella foto. L'app userà questi punti per correggere la prospettiva.</p>
+          <div class="canvas-hold"><canvas id="editCanvas"></canvas></div>
+          <div class="detect" id="detectStatus" hidden></div>
+          <label class="dbgtoggle"><input type="checkbox" id="debugChk"> Mostra cosa vede l'app (riquadri sui quadrati rilevati)</label>
+          <div class="stat" style="margin-top:10px">
+            <div>angolo attivo: <b id="activeCorner">—</b></div>
+            <div>tocca un pallino per correggerlo</div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn" id="processBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+              Digitalizza
+            </button>
+            <button class="btn ghost mini" id="autoBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m14.5-6.5-1.4 1.4M7.9 16.1l-1.4 1.4m11.6 0-1.4-1.4M7.9 7.9 6.5 6.5"/><circle cx="12" cy="12" r="3.4"/></svg>
+              Rileva marcatori
+            </button>
+            <button class="btn ghost mini" id="resetCornersBtn">Ripristina</button>
+            <button class="btn ghost mini" id="newPhotoBtn">Altra foto</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="resultStage" hidden>
+        <div class="pad">
+          <h2>Disegno digitalizzato</h2>
+          <p class="sub">Tratto estratto e ridisegnato su campo pulito. Dai un nome all'esercizio: comparirà sull'immagine.</p>
+          <div class="namebar">
+            <input id="exName" type="text" placeholder="Nome esercizio (es. Rondo 4v2)" maxlength="60" autocomplete="off">
+            <input id="exDate" type="date">
+          </div>
+          <div class="canvas-hold"><canvas id="resultCanvas"></canvas></div>
+
+          <div class="ctrl">
+            <label>Sensibilità inchiostro <span id="thVal">128</span></label>
+            <input type="range" id="thRange" min="60" max="210" value="128">
+          </div>
+          <div class="ctrl">
+            <label>Pulizia rumore <span id="clVal">2</span></label>
+            <input type="range" id="clRange" min="0" max="4" value="2">
+          </div>
+          <div class="ctrl" style="margin-top:6px">
+            <label>Colore tratto</label>
+            <div class="swatches" id="swatches">
+              <div class="swatch orig" data-color="auto" aria-pressed="true" title="Colore originale"></div>
+              <div class="swatch" data-color="#17201b" style="background:#17201b" aria-pressed="false"></div>
+              <div class="swatch" data-color="#e2542f" style="background:#e2542f" aria-pressed="false"></div>
+              <div class="swatch" data-color="#2b6cff" style="background:#2b6cff" aria-pressed="false"></div>
+              <div class="swatch" data-color="#f2c200" style="background:#f2c200" aria-pressed="false"></div>
+              <div class="swatch" data-color="#e63c8a" style="background:#e63c8a" aria-pressed="false"></div>
+            </div>
+          </div>
+
+          <div class="divider" style="margin:14px 0"></div>
+          <div class="row">
+            <button class="btn" id="dlShotBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              Scarica PNG
+            </button>
+            <button class="btn ghost" id="saveShotBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 3h11l3 3v15H5zM8 3v6h7"/><circle cx="12" cy="15" r="2.4"/></svg>
+              Salva in libreria
+            </button>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn ghost mini" id="flipBtn">↔ Specchia</button>
+            <button class="btn ghost mini" id="rot180Btn">⟳ Ruota 180°</button>
+            <button class="btn ghost mini" id="reeditBtn">Torna agli angoli</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LIBRARY ============ -->
+    <section class="view" id="view-library" hidden>
+      <div class="card">
+        <div class="pad">
+          <h2>Sessioni salvate</h2>
+          <p class="sub">I disegni digitalizzati restano su questo dispositivo. Per esportarli, tieni premuto (o tasto destro) su un'immagine e scegli “Salva”.</p>
+          <div id="galleryHold"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="printArea"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  let toastT;
+  function toast(msg){
+    const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200);
+  }
+
+  $('#themeBtn').addEventListener('click',()=>{
+    const cur=document.documentElement.getAttribute('data-theme');
+    const dark=cur? cur==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', dark?'light':'dark');
+    drawTemplate(); if(editState.img) drawEditor(); if(lastResult) renderResult();
+  });
+
+  $$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{
+    $$('nav.tabs button').forEach(x=>x.setAttribute('aria-selected', x===b));
+    ['template','capture','library'].forEach(v=>{ $('#view-'+v).hidden = (v!==b.dataset.tab); });
+    if(b.dataset.tab==='library') renderGallery();
+  }));
+
+  /* =================================================================
+     PITCH GEOMETRY  (clean black line-art, real proportions in metres)
+  ================================================================= */
+  let mode='full';   // 'full' | 'half'
+
+  function pitchDims(base){                 // base = playing-field height (px)
+    const aspect = mode==='half' ? 52.5/68 : 105/68;
+    const FH = base, FW = FH*aspect, m = FH*0.10;
+    return { W:FW+2*m, H:FH+2*m, m, FW, FH, mode };
+  }
+
+  // draws the pitch to fill the whole canvas defined by D
+  function drawPitch(ctx, D, opt){
+    opt = opt||{};
+    const line = opt.lineColor || '#161616';
+    const bg   = opt.bg || '#ffffff';
+    const half = D.mode==='half';
+    ctx.fillStyle = bg; ctx.fillRect(0,0,D.W,D.H);
+
+    const L=D.m, T=D.m, R=D.m+D.FW, B=D.m+D.FH, cy=(T+B)/2;
+    const sx = D.FW/(half?52.5:105), sy = D.FH/68;
+    const lw = Math.max(1.1, D.FW*(opt.bold?0.006:0.004));
+    ctx.lineWidth=lw; ctx.strokeStyle=line; ctx.fillStyle=line;
+    ctx.lineJoin='miter'; ctx.lineCap='butt';
+
+    function dot(x,y,r){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+
+    // outer boundary
+    ctx.strokeRect(L,T,D.FW,D.FH);
+
+    // one end: goal, boxes, spot, D-arc.  gx = goal-line x, dir = into field
+    function end(gx,dir){
+      ctx.strokeRect(gx, cy-20.16*sy, dir*16.5*sx, 40.32*sy);     // penalty area
+      ctx.strokeRect(gx, cy-9.16*sy,  dir*5.5*sx,  18.32*sy);     // goal area
+      ctx.strokeRect(gx, cy-3.66*sy, -dir*2.0*sx,  7.32*sy);      // goal (sticks out)
+      const spot = gx + dir*11*sx;
+      dot(spot, cy, lw*1.4);
+      const a = Math.acos(5.5/9.15);
+      ctx.beginPath();
+      if(dir>0) ctx.arc(spot, cy, 9.15*sx, -a, a);
+      else      ctx.arc(spot, cy, 9.15*sx, Math.PI-a, Math.PI+a);
+      ctx.stroke();
+    }
+    end(L, 1);
+    if(!half) end(R, -1);
+
+    // halfway + centre circle
+    if(half){
+      ctx.beginPath(); ctx.arc(R, cy, 9.15*sx, Math.PI/2, Math.PI*1.5); ctx.stroke();
+      dot(R, cy, lw*1.4);
+    }else{
+      const mid=(L+R)/2;
+      ctx.beginPath(); ctx.moveTo(mid,T); ctx.lineTo(mid,B); ctx.stroke();
+      ctx.beginPath(); ctx.arc(mid, cy, 9.15*sx, 0, 7); ctx.stroke();
+      dot(mid, cy, lw*1.4);
+    }
+
+    // corner arcs
+    const cr = Math.max(7, D.FW*0.028);
+    function carc(x,y,s){ ctx.beginPath(); ctx.arc(x,y,cr,s,s+Math.PI/2); ctx.stroke(); }
+    carc(L,T,0); carc(L,B,Math.PI*1.5);
+    if(!half){ carc(R,T,Math.PI/2); carc(R,B,Math.PI); }
+
+    return {L,T,R,B};
+  }
+
+  function drawDots(ctx,D){
+    const gap = D.FW*0.032, r = Math.max(0.9, D.FW*0.0016);
+    ctx.fillStyle = themeDark() ? 'rgba(150,170,210,0.28)' : 'rgba(120,140,190,0.32)';
+    for(let x=D.m+gap; x<D.m+D.FW; x+=gap)
+      for(let y=D.m+gap; y<D.m+D.FH; y+=gap){ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+  }
+  function drawFiducials(ctx,D){
+    const s=D.FW*0.038, g=D.FW*0.010;
+    const L=D.m,T=D.m,R=D.m+D.FW,B=D.m+D.FH;
+    const sq=[[L-s-g,T-s-g],[R+g,T-s-g],[R+g,B+g],[L-s-g,B+g]];
+    sq.forEach(([x,y])=>{ ctx.fillStyle='#141414'; ctx.fillRect(x,y,s,s);
+      ctx.fillStyle='#fff'; ctx.fillRect(x+s*0.3,y+s*0.3,s*0.4,s*0.4); });
+  }
+  function themeDark(){
+    const t=document.documentElement.getAttribute('data-theme');
+    return t? t==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  /* =================================================================
+     TEMPLATE TAB
+  ================================================================= */
+  const tplCanvas=$('#tplCanvas'), tctx=tplCanvas.getContext('2d');
+  function drawTemplate(){
+    const D=pitchDims(1000);
+    tplCanvas.width=Math.round(D.W); tplCanvas.height=Math.round(D.H);
+    drawPitch(tctx, D, {lineColor:'#aeb7cf'});   // faint reference lines
+    drawDots(tctx, D);
+    drawFiducials(tctx, D);
+  }
+  function syncSeg(){
+    $$('#pitchSeg button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.pitch===mode));
+    $$('#capSeg button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.pitch===mode));
+  }
+  function onSeg(e){
+    const b=e.target.closest('button'); if(!b) return;
+    mode=b.dataset.pitch; syncSeg(); drawTemplate();
+  }
+  $('#pitchSeg').addEventListener('click',onSeg);
+  $('#capSeg').addEventListener('click',onSeg);
+
+  $('#printBtn').addEventListener('click',()=>{
+    const url=tplCanvas.toDataURL('image/png');
+    let st=document.getElementById('printPage');
+    if(!st){ st=document.createElement('style'); st.id='printPage'; document.head.appendChild(st); }
+    st.textContent='@page{size:A4 '+(mode==='full'?'landscape':'portrait')+';margin:8mm}';
+    const pa=$('#printArea'); pa.innerHTML='';
+    const img=new Image();
+    img.onload=()=>{ requestAnimationFrame(()=>{ try{ window.print(); }catch(e){ toast('Stampa non disponibile: usa Scarica PNG'); } }); };
+    img.onerror=()=>toast('Errore nel preparare la stampa');
+    img.src=url; pa.appendChild(img);
+  });
+  $('#tplSaveBtn').addEventListener('click',()=>{
+    download(tplCanvas.toDataURL('image/png'), 'modello-campo-'+(mode==='half'?'mezzo':'intero')+'.png');
+  });
+
+  /* =================================================================
+     CAPTURE — load photo & corner editor
+  ================================================================= */
+  const editState={ img:null, natW:0, natH:0, scale:1, corners:null, active:0 };
+  $('#camBtn').addEventListener('click',()=>$('#camInput').click());
+  $('#upBtn').addEventListener('click',()=>$('#upInput').click());
+  $('#camInput').addEventListener('change',e=>loadPhoto(e.target.files[0]));
+  $('#upInput').addEventListener('change',e=>loadPhoto(e.target.files[0]));
+  $('#newPhotoBtn').addEventListener('click',()=>$('#upInput').click());
+
+  function loadPhoto(file){
+    if(!file) return;
+    const img=new Image();
+    img.onload=()=>{
+      editState.img=img; editState.natW=img.naturalWidth; editState.natH=img.naturalHeight;
+      const iw=img.naturalWidth, ih=img.naturalHeight, dx=iw*0.10, dy=ih*0.12;
+      editState.corners=[[dx,dy],[iw-dx,dy],[iw-dx,ih-dy],[dx,ih-dy]];
+      editState.active=0;
+      $('#captureIntro').hidden=true; $('#editStage').hidden=false; $('#resultStage').hidden=true;
+      $('#detectStatus').hidden=true;
+      lastResult=null; warpBuf=null; flipFix=false; rot180Fix=false;
+      $('#exName').value=''; if(!$('#exDate').value) $('#exDate').value=todayISO();
+      setupEditorCanvas(); drawEditor();
+      setTimeout(runDetection,30);
+    };
+    img.onerror=()=>toast('Immagine non valida');
+    img.src=URL.createObjectURL(file);
+  }
+
+  const editCanvas=$('#editCanvas'), ectx=editCanvas.getContext('2d');
+  function setupEditorCanvas(){
+    const maxW=Math.min(720, $('.wrap').clientWidth-52);
+    const s=maxW/editState.natW; editState.scale=s;
+    editCanvas.width=Math.round(editState.natW*s);
+    editCanvas.height=Math.round(editState.natH*s);
+  }
+  const CORNER_NAMES=['Alto-sx','Alto-dx','Basso-dx','Basso-sx'];
+  function drawEditor(){
+    const s=editState.scale, acc=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    ectx.clearRect(0,0,editCanvas.width,editCanvas.height);
+    ectx.drawImage(editState.img,0,0,editCanvas.width,editCanvas.height);
+    if(editState.showDebug && editState.cands){
+      ectx.lineWidth=2; ectx.setLineDash([]);
+      editState.cands.forEach(([x,y,bw,bh,eye])=>{
+        ectx.strokeStyle = eye? '#12b76a' : '#f2a900';
+        ectx.strokeRect(x*s,y*s,bw*s,bh*s);
+      });
+    }
+    const cs=editState.corners.map(([x,y])=>[x*s,y*s]);
+    ectx.beginPath(); cs.forEach((p,i)=> i?ectx.lineTo(p[0],p[1]):ectx.moveTo(p[0],p[1])); ectx.closePath();
+    ectx.fillStyle='rgba(226,84,47,0.12)'; ectx.fill();
+    ectx.strokeStyle=acc; ectx.lineWidth=2; ectx.setLineDash([7,5]); ectx.stroke(); ectx.setLineDash([]);
+    cs.forEach((p,i)=>{
+      ectx.beginPath(); ectx.arc(p[0],p[1], i===editState.active?13:10,0,7);
+      ectx.fillStyle= i===editState.active? acc : '#fff'; ectx.fill();
+      ectx.lineWidth=2.5; ectx.strokeStyle= i===editState.active?'#fff':acc; ectx.stroke();
+      ectx.fillStyle= i===editState.active?'#fff':acc;
+      ectx.font='bold 11px sans-serif'; ectx.textAlign='center'; ectx.textBaseline='middle';
+      ectx.fillText(String(i+1),p[0],p[1]);
+    });
+    $('#activeCorner').textContent=CORNER_NAMES[editState.active];
+  }
+  let dragging=false;
+  function canvasPt(ev){
+    const r=editCanvas.getBoundingClientRect();
+    const cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+    const cy=(ev.touches?ev.touches[0].clientY:ev.clientY)-r.top;
+    return [cx*(editCanvas.width/r.width), cy*(editCanvas.height/r.height)];
+  }
+  function nearest(pt){
+    const s=editState.scale; let best=0,bd=1e9;
+    editState.corners.forEach((c,i)=>{ const dx=c[0]*s-pt[0],dy=c[1]*s-pt[1],d=dx*dx+dy*dy; if(d<bd){bd=d;best=i;} });
+    return best;
+  }
+  function startDrag(ev){ ev.preventDefault(); editState.active=nearest(canvasPt(ev)); dragging=true; moveDrag(ev); }
+  function moveDrag(ev){
+    if(!dragging) return; ev.preventDefault();
+    const pt=canvasPt(ev), s=editState.scale;
+    editState.corners[editState.active]=[
+      Math.max(0,Math.min(editState.natW, pt[0]/s)),
+      Math.max(0,Math.min(editState.natH, pt[1]/s))];
+    drawEditor();
+  }
+  function endDrag(){ dragging=false; }
+  editCanvas.addEventListener('mousedown',startDrag);
+  editCanvas.addEventListener('mousemove',moveDrag);
+  window.addEventListener('mouseup',endDrag);
+  editCanvas.addEventListener('touchstart',startDrag,{passive:false});
+  editCanvas.addEventListener('touchmove',moveDrag,{passive:false});
+  editCanvas.addEventListener('touchend',endDrag);
+  $('#resetCornersBtn').addEventListener('click',()=>{
+    const iw=editState.natW, ih=editState.natH, dx=iw*0.10, dy=ih*0.12;
+    editState.corners=[[dx,dy],[iw-dx,dy],[iw-dx,ih-dy],[dx,ih-dy]]; drawEditor();
+  });
+
+  /* =================================================================
+     AUTO-DETECT the 4 corner fiducials (black square + white eye)
+  ================================================================= */
+  function detectStatus(kind,msg){
+    const el=$('#detectStatus');
+    el.hidden=false; el.className='detect '+kind;
+    const ic = kind==='ok'
+      ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>'
+      : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v5m0 3h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>';
+    el.innerHTML=ic+'<span>'+msg+'</span>';
+  }
+
+  // Otsu global threshold on a grayscale Uint8 array
+  function otsu(gray){
+    const h=new Array(256).fill(0); for(let i=0;i<gray.length;i++) h[gray[i]]++;
+    const tot=gray.length; let sum=0; for(let i=0;i<256;i++) sum+=i*h[i];
+    let sumB=0,wB=0,best=0,thr=128;
+    for(let t=0;t<256;t++){
+      wB+=h[t]; if(!wB) continue; const wF=tot-wB; if(!wF) break;
+      sumB+=t*h[t];
+      const mB=sumB/wB, mF=(sum-sumB)/wF, between=wB*wF*(mB-mF)*(mB-mF);
+      if(between>best){ best=between; thr=t; }
+    }
+    return thr;
+  }
+
+  // returns 4 corners in FULL-RES photo coords [TL,TR,BR,BL], or null
+  function detectMarkers(img){
+    const natW=img.naturalWidth, natH=img.naturalHeight;
+    const maxDim=760, sc=Math.min(1, maxDim/Math.max(natW,natH));
+    const w=Math.max(1,Math.round(natW*sc)), h=Math.max(1,Math.round(natH*sc));
+    const c=document.createElement('canvas'); c.width=w; c.height=h;
+    const cx=c.getContext('2d',{willReadFrequently:true});
+    cx.drawImage(img,0,0,w,h);
+    const d=cx.getImageData(0,0,w,h).data;
+
+    const gray=new Uint8Array(w*h);
+    for(let i=0;i<w*h;i++) gray[i]=(d[i*4]*0.299+d[i*4+1]*0.587+d[i*4+2]*0.114)|0;
+    let thr=otsu(gray); thr=Math.max(95, Math.min(thr, 175));   // catch dark markers, skip faint lines
+    const dark=new Uint8Array(w*h);
+    for(let i=0;i<w*h;i++) dark[i]= gray[i]<thr ?1:0;
+    const isDark=(x,y)=> x>=0&&y>=0&&x<w&&y<h && dark[y*w+x]===1;
+
+    // connected components (4-conn) over dark pixels
+    const lab=new Int32Array(w*h).fill(0);
+    const stack=new Int32Array(w*h); let nextLab=0;
+    const blobs=[];
+    for(let s=0;s<w*h;s++){
+      if(!dark[s]||lab[s]) continue;
+      nextLab++; let sp=0; stack[sp++]=s; lab[s]=nextLab;
+      let minx=w,miny=h,maxx=0,maxy=0,cnt=0;
+      while(sp){
+        const p=stack[--sp], px=p%w, py=(p/w)|0;
+        cnt++; if(px<minx)minx=px; if(px>maxx)maxx=px; if(py<miny)miny=py; if(py>maxy)maxy=py;
+        const nb=[p-1,p+1,p-w,p+w], nx=[px-1,px+1,px,px], ny=[py,py,py-1,py+1];
+        for(let k=0;k<4;k++){ const q=nb[k];
+          if(nx[k]<0||nx[k]>=w||ny[k]<0||ny[k]>=h) continue;
+          if(dark[q]&&!lab[q]){ lab[q]=nextLab; stack[sp++]=q; } }
+      }
+      blobs.push({minx,miny,maxx,maxy,cnt});
+    }
+
+    // candidate blobs: square-ish, plausible size — with OR without white eye
+    const minSide=Math.max(5, w*0.012), maxSide=w*0.42;
+    const cand=[];
+    for(const b of blobs){
+      const bw=b.maxx-b.minx+1, bh=b.maxy-b.miny+1;
+      if(bw<minSide||bh<minSide||bw>maxSide||bh>maxSide) continue;
+      const ar=bw/bh; if(ar<0.5||ar>2.0) continue;
+      const fill=b.cnt/(bw*bh); if(fill<0.4) continue;          // reject thin lines/arcs
+      const mx=((b.minx+b.maxx)/2)|0, my=((b.miny+b.maxy)/2)|0;
+      // white-eye bonus (helps ranking, NOT required)
+      let eye=0;
+      if(!isDark(mx,my)){
+        let ring=0; const rx=Math.round(bw*0.34), ry=Math.round(bh*0.34);
+        const pts=[[mx-rx,my],[mx+rx,my],[mx,my-ry],[mx,my+ry],[mx-rx,my-ry],[mx+rx,my+ry],[mx-rx,my+ry],[mx+rx,my-ry]];
+        for(const [x,y] of pts) if(isDark(x,y)) ring++;
+        if(ring>=5) eye=1;
+      }
+      cand.push({mx,my,minx:b.minx,miny:b.miny,maxx:b.maxx,maxy:b.maxy,side:(bw+bh)/2,eye});
+    }
+    // full-res candidate boxes for the debug overlay
+    const cands=cand.map(m=>[m.minx/sc,m.miny/sc,(m.maxx-m.minx+1)/sc,(m.maxy-m.miny+1)/sc,m.eye]);
+
+    // assign a DISTINCT marker to each image corner (greedy, strongly prefers the white eye)
+    const imgCorners=[[0,0],[w,0],[w,h],[0,h]];         // TL,TR,BR,BL
+    const diag=Math.hypot(w,h);
+    const chosen=[null,null,null,null], used=new Set();
+    for(let k=0;k<4;k++){
+      let best=-1,bs=-Infinity;
+      for(let mi=0;mi<cand.length;mi++){
+        if(used.has(mi)) continue; const m=cand[mi];
+        const dist=Math.hypot(m.mx-imgCorners[k][0], m.my-imgCorners[k][1]);
+        const score=-dist + m.eye*diag*0.12 - m.side*0.1;   // near corner + strong eye bonus
+        if(score>bs){ bs=score; best=mi; }
+      }
+      if(best>=0){ chosen[k]=cand[best]; used.add(best); }
+    }
+    if(chosen.some(c=>!c))
+      return {corners:null, found:cand.length, cands};
+
+    // each marker's INNER corner (the one pointing at the pitch)
+    const inner=[
+      [chosen[0].maxx, chosen[0].maxy],   // TL -> bottom-right
+      [chosen[1].minx, chosen[1].maxy],   // TR -> bottom-left
+      [chosen[2].minx, chosen[2].miny],   // BR -> top-left
+      [chosen[3].maxx, chosen[3].miny],   // BL -> top-right
+    ].map(([x,y])=>[x/sc, y/sc]);
+    return {corners:inner, found:cand.length, cands};
+  }
+
+  function runDetection(){
+    if(!editState.img) return;
+    let res; try{ res=detectMarkers(editState.img); }catch(e){ res={corners:null,found:0,cands:[]}; }
+    editState.cands=res.cands||[];
+    if(res.corners){
+      editState.corners=res.corners; editState.active=0; drawEditor();
+      detectStatus('ok','4 marcatori rilevati automaticamente — controlla e correggi solo se serve.');
+    }else{
+      drawEditor();
+      detectStatus('warn','Trovati '+(res.found||0)+' quadrati scuri, ma non 4 ben distribuiti agli angoli. Attiva “Mostra cosa vede l\'app” per capire, oppure sistema i pallini a mano.');
+    }
+  }
+  $('#autoBtn').addEventListener('click',runDetection);
+  $('#debugChk').addEventListener('change',e=>{ editState.showDebug=e.target.checked; drawEditor(); });
+
+  /* =================================================================
+     HOMOGRAPHY
+  ================================================================= */
+  function solve(A,b){
+    const n=A.length;
+    for(let i=0;i<n;i++){
+      let mx=i; for(let r=i+1;r<n;r++) if(Math.abs(A[r][i])>Math.abs(A[mx][i])) mx=r;
+      [A[i],A[mx]]=[A[mx],A[i]]; [b[i],b[mx]]=[b[mx],b[i]];
+      const piv=A[i][i]||1e-9;
+      for(let r=0;r<n;r++){ if(r===i)continue; const f=A[r][i]/piv;
+        for(let c=i;c<n;c++) A[r][c]-=f*A[i][c]; b[r]-=f*b[i]; }
+    }
+    return b.map((v,i)=>v/(A[i][i]||1e-9));
+  }
+  function getPerspective(src,dst){       // maps dst -> src
+    const A=[],b=[];
+    for(let i=0;i<4;i++){ const [x,y]=dst[i],[X,Y]=src[i];
+      A.push([x,y,1,0,0,0,-x*X,-y*X]); b.push(X);
+      A.push([0,0,0,x,y,1,-x*Y,-y*Y]); b.push(Y); }
+    const h=solve(A,b); h.push(1); return h;
+  }
+  const applyH=(h,x,y)=>{ const w=h[6]*x+h[7]*y+h[8];
+    return [(h[0]*x+h[1]*y+h[2])/w,(h[3]*x+h[4]*y+h[5])/w]; };
+
+  /* =================================================================
+     PROCESS — warp (into playing-field buffer) + ink extraction
+  ================================================================= */
+  let warpBuf=null, warpW=0, warpH=0;
+  let lastResult=null, inkColor='auto', threshold=128, cleanup=2;
+  const resultCanvas=$('#resultCanvas'), rctx=resultCanvas.getContext('2d');
+
+  $('#processBtn').addEventListener('click',()=>{
+    warpPhoto();
+    $('#editStage').hidden=true; $('#resultStage').hidden=false;
+    renderResult(); toast('Prospettiva corretta');
+  });
+  $('#reeditBtn').addEventListener('click',()=>{ $('#resultStage').hidden=true; $('#editStage').hidden=false; drawEditor(); });
+  $('#flipBtn').addEventListener('click',()=>{ flipFix=!flipFix; warpPhoto(); renderResult(); });
+  $('#rot180Btn').addEventListener('click',()=>{ rot180Fix=!rot180Fix; warpPhoto(); renderResult(); });
+
+  let flipFix=false, rot180Fix=false;   // user overrides for the ambiguous orientation
+
+  // order any 4 points clockwise (mirror-safe) and align the quad's long side to the target
+  function orientCorners(pts, targetAspect){
+    const cx=(pts[0][0]+pts[1][0]+pts[2][0]+pts[3][0])/4;
+    const cy=(pts[0][1]+pts[1][1]+pts[2][1]+pts[3][1])/4;
+    // sort clockwise in image space (y grows downward), preserving true winding → never mirrors
+    let o=pts.slice().sort((a,b)=>Math.atan2(a[1]-cy,a[0]-cx)-Math.atan2(b[1]-cy,b[0]-cx));
+    // rotate array so it starts at the top-left-most point → [TL,TR,BR,BL]
+    let si=0,sb=Infinity; o.forEach((p,i)=>{ const s=p[0]+p[1]; if(s<sb){sb=s;si=i;} });
+    o=o.slice(si).concat(o.slice(0,si));
+    // align long side of the quad with the long side of the target field
+    const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+    const wq=dist(o[0],o[1])+dist(o[3],o[2]), hq=dist(o[0],o[3])+dist(o[1],o[2]);
+    if((wq>=hq)!==(targetAspect>=1)) o=[o[1],o[2],o[3],o[0]];      // rotate 90°, winding kept
+    if(flipFix)   o=[o[1],o[0],o[3],o[2]];                        // horizontal mirror
+    if(rot180Fix) o=[o[2],o[3],o[0],o[1]];                        // 180°
+    return o;
+  }
+
+  function warpPhoto(){
+    const D=pitchDims(680);
+    const pw=Math.round(D.FW), ph=Math.round(D.FH);
+    const oc=document.createElement('canvas'); oc.width=editState.natW; oc.height=editState.natH;
+    const octx=oc.getContext('2d',{willReadFrequently:true});
+    octx.drawImage(editState.img,0,0);
+    const src=octx.getImageData(0,0,oc.width,oc.height).data, sw=oc.width, sh=oc.height;
+    const srcPts=orientCorners(editState.corners, D.FW/D.FH);
+    const H=getPerspective(srcPts, [[0,0],[pw,0],[pw,ph],[0,ph]]);
+    const buf=new Uint8ClampedArray(pw*ph*4);
+    for(let y=0;y<ph;y++) for(let x=0;x<pw;x++){
+      const [u,v]=applyH(H,x+0.5,y+0.5); const oi=(y*pw+x)*4;
+      if(u<0||v<0||u>=sw-1||v>=sh-1){ buf[oi]=buf[oi+1]=buf[oi+2]=255; buf[oi+3]=255; continue; }
+      const x0=u|0,y0=v|0,fx=u-x0,fy=v-y0;
+      const i00=(y0*sw+x0)*4,i10=i00+4,i01=i00+sw*4,i11=i01+4;
+      for(let ch=0;ch<3;ch++){
+        const a=src[i00+ch]*(1-fx)+src[i10+ch]*fx, b2=src[i01+ch]*(1-fx)+src[i11+ch]*fx;
+        buf[oi+ch]=a*(1-fy)+b2*fy;
+      }
+      buf[oi+3]=255;
+    }
+    warpBuf=buf; warpW=pw; warpH=ph;
+  }
+
+  function hex(h){ h=h.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  function rgb2hsl(r,g,b){
+    r/=255;g/=255;b/=255; const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;
+    let h=0,s=0; const dd=mx-mn;
+    if(dd){ s=l>0.5? dd/(2-mx-mn): dd/(mx+mn);
+      if(mx===r) h=((g-b)/dd+(g<b?6:0));
+      else if(mx===g) h=(b-r)/dd+2; else h=(r-g)/dd+4; h/=6; }
+    return [h,s,l];
+  }
+  function hsl2rgb(h,s,l){
+    if(!s) { const v=Math.round(l*255); return [v,v,v]; }
+    const q=l<0.5? l*(1+s): l+s-l*s, p=2*l-q;
+    const t=(x)=>{ if(x<0)x+=1; if(x>1)x-=1;
+      if(x<1/6)return p+(q-p)*6*x; if(x<1/2)return q; if(x<2/3)return p+(q-p)*(2/3-x)*6; return p; };
+    return [Math.round(t(h+1/3)*255),Math.round(t(h)*255),Math.round(t(h-1/3)*255)];
+  }
+
+  function fmtDate(v){
+    let d = v? new Date(v+'T00:00:00') : new Date();
+    if(isNaN(d)) d=new Date();
+    return d.toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'});
+  }
+
+  function renderResult(){
+    const D=pitchDims(680);
+    const W=Math.round(D.W), Hp=Math.round(D.H);
+
+    // 1) pitch + extracted ink onto an offscreen canvas
+    const pc=document.createElement('canvas'); pc.width=W; pc.height=Hp;
+    const pctx=pc.getContext('2d',{willReadFrequently:true});
+    drawPitch(pctx, D, {bold:true});
+
+    if(warpBuf){
+      const pw=warpW, ph=warpH, N=pw*ph, wd=warpBuf, mask=new Uint8Array(N);
+      for(let i=0;i<N;i++){
+        const r=wd[i*4],g=wd[i*4+1],b=wd[i*4+2];
+        if(0.299*r+0.587*g+0.114*b < threshold) mask[i]=1;
+      }
+      for(let p=0;p<cleanup;p++){
+        const m2=new Uint8Array(N);
+        for(let y=1;y<ph-1;y++) for(let x=1;x<pw-1;x++){
+          const i=y*pw+x; if(!mask[i]) continue;
+          let n=0; if(mask[i-1])n++; if(mask[i+1])n++; if(mask[i-pw])n++; if(mask[i+pw])n++;
+          if(n>=2) m2[i]=1;
+        }
+        mask.set(m2);
+      }
+      const mx=Math.round(D.m), my=Math.round(D.m);
+      const region=pctx.getImageData(mx,my,pw,ph), rd=region.data;
+      const ink = inkColor==='auto'? null : hex(inkColor);
+      for(let i=0;i<N;i++){
+        if(!mask[i]) continue; const oi=i*4;
+        if(ink){ rd[oi]=ink[0]; rd[oi+1]=ink[1]; rd[oi+2]=ink[2]; }
+        else{
+          let [hh,ss]=rgb2hsl(wd[oi],wd[oi+1],wd[oi+2]);
+          const c = ss<0.12 ? [26,30,34] : hsl2rgb(hh, Math.min(1,ss*1.8+0.2), 0.44);
+          rd[oi]=c[0]; rd[oi+1]=c[1]; rd[oi+2]=c[2];
+        }
+        rd[oi+3]=255;
+      }
+      pctx.putImageData(region,mx,my);
+    }
+
+    // 2) compose with a titled header (name + date) baked into the image
+    const name=($('#exName').value||'').trim();
+    const dateStr=fmtDate($('#exDate').value||'');
+    const headerH=Math.round(W*0.062);
+    resultCanvas.width=W; resultCanvas.height=Hp+headerH;
+    rctx.fillStyle='#ffffff'; rctx.fillRect(0,0,W,Hp+headerH);
+
+    const pad=Math.round(W*0.028), fam="'Inter',system-ui,sans-serif", famD="'Barlow Condensed',system-ui,sans-serif";
+    rctx.textBaseline='middle';
+    // date on the right (measure first to reserve space)
+    rctx.textAlign='right'; rctx.fillStyle='#6a6a6a';
+    const dSize=Math.round(headerH*0.34); rctx.font='500 '+dSize+'px '+fam;
+    rctx.fillText(dateStr, W-pad, headerH*0.56);
+    const dW=rctx.measureText(dateStr).width;
+    // name on the left, shrink to fit the remaining width
+    rctx.textAlign='left'; rctx.fillStyle='#141414';
+    const maxNameW=W - 2*pad - dW - pad;
+    let nSize=Math.round(headerH*0.52);
+    rctx.font='700 '+nSize+'px '+famD;
+    while(rctx.measureText(name||'Esercizio').width>maxNameW && nSize>14){ nSize--; rctx.font='700 '+nSize+'px '+famD; }
+    rctx.fillText(name||'Esercizio', pad, headerH*0.54);
+    // divider
+    rctx.strokeStyle='#e4e4e4'; rctx.lineWidth=1;
+    rctx.beginPath(); rctx.moveTo(pad, headerH-0.5); rctx.lineTo(W-pad, headerH-0.5); rctx.stroke();
+
+    rctx.drawImage(pc, 0, headerH);
+    lastResult=resultCanvas.toDataURL('image/png');
+  }
+
+  $('#thRange').addEventListener('input',e=>{ threshold=+e.target.value; $('#thVal').textContent=threshold; renderResult(); });
+  $('#clRange').addEventListener('input',e=>{ cleanup=+e.target.value; $('#clVal').textContent=cleanup; renderResult(); });
+  $('#swatches').addEventListener('click',e=>{
+    const s=e.target.closest('.swatch'); if(!s) return;
+    $$('#swatches .swatch').forEach(x=>x.setAttribute('aria-pressed',x===s));
+    inkColor=s.dataset.color; renderResult();
+  });
+  const todayISO=()=>{ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); };
+  $('#exName').addEventListener('input',renderResult);
+  $('#exDate').addEventListener('change',renderResult);
+
+  /* =================================================================
+     LIBRARY
+  ================================================================= */
+  const KEY='tattica_sessions_v1';
+  const loadShots=()=>{ try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; } };
+  const saveShots=a=>{ try{ localStorage.setItem(KEY,JSON.stringify(a)); }catch(e){ toast('Memoria piena: elimina qualche sessione'); } };
+
+  function download(url,name){
+    const a=document.createElement('a'); a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function slug(s){ return (s||'esercizio').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+
+  $('#dlShotBtn').addEventListener('click',()=>{
+    if(!lastResult){ toast('Niente da scaricare'); return; }
+    const nm=slug($('#exName').value||'esercizio');
+    const dt=$('#exDate').value||todayISO();
+    download(lastResult, nm+'-'+dt+'.png');
+  });
+
+  $('#saveShotBtn').addEventListener('click',()=>{
+    if(!lastResult){ toast('Niente da salvare'); return; }
+    const shots=loadShots();
+    const name=($('#exName').value||'').trim() || ('Esercizio '+(shots.length+1));
+    const dateMs=$('#exDate').value? new Date($('#exDate').value+'T00:00:00').getTime() : Date.now();
+    shots.unshift({ id:Date.now(), name, date:dateMs, img:lastResult });
+    saveShots(shots); toast('Salvato in libreria');
+  });
+
+  function renderGallery(){
+    const hold=$('#galleryHold'), shots=loadShots();
+    if(!shots.length){
+      hold.innerHTML='<div class="empty"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 12h18M12 4v16"/></svg><div>Nessuna sessione salvata.<br>Digitalizza un esercizio dalla scheda <b>Acquisisci</b>.</div></div>';
+      return;
+    }
+    hold.innerHTML='<div class="gallery"></div>';
+    const g=hold.querySelector('.gallery');
+    shots.forEach(s=>{
+      const el=document.createElement('div'); el.className='shot';
+      const ds=new Date(s.date).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit'});
+      el.innerHTML='<img src="'+s.img+'" alt="'+s.name+'"><div class="meta"><span class="nm">'+s.name+'</span><time>'+ds+'</time>'+
+        '<button title="Scarica PNG" data-dl="'+s.id+'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v10m0 0 3.5-3.5M12 13 8.5 9.5M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"/></svg></button>'+
+        '<button title="Elimina" data-del="'+s.id+'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></button></div>';
+      el.querySelector('img').addEventListener('click',()=>openModal(s.img, s.name));
+      el.querySelector('[data-dl]').addEventListener('click',()=>download(s.img, slug(s.name)+'.png'));
+      el.querySelector('[data-del]').addEventListener('click',()=>{ saveShots(loadShots().filter(x=>x.id!==s.id)); renderGallery(); toast('Eliminata'); });
+      g.appendChild(el);
+    });
+  }
+
+  function openModal(src,cap){
+    const m=document.createElement('div'); m.className='modal';
+    m.innerHTML='<div class="box"><img src="'+src+'"><div class="cap">'+(cap||'')+'</div></div>';
+    m.addEventListener('click',()=>m.remove()); document.body.appendChild(m);
+  }
+
+  syncSeg(); drawTemplate();
+  window.addEventListener('resize',()=>{ if(editState.img){ setupEditorCanvas(); drawEditor(); } });
+})();
+</script>
+</body>
+</html>
